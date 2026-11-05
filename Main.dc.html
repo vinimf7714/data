@@ -1,0 +1,564 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>Processar e gerar SPED ECF</title>
+<script src="./vendor/react.js"></script>
+<script src="./vendor/react-dom.js"></script>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&amp;family=IBM+Plex+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:#B03A0A}a:hover{color:#7C2D12}
+button{font-family:inherit}
+input,select{font-family:inherit}
+</style>
+</helmet>
+<div style="position: relative; min-height: 1180px; background: #F4F4F2; color: #1C1C1A; font-family: 'IBM Plex Sans', system-ui, sans-serif; font-size: 14px; line-height: 1.45">
+
+  <header style="background: #FFFFFF; border-bottom: 1px solid #E3E2DE">
+    <div style="max-width: 1240px; margin: 0 auto; padding: 14px 24px; display: flex; flex-wrap: wrap; gap: 12px; align-items: center; justify-content: space-between">
+      <nav aria-label="Trilha" style="display: flex; gap: 8px; align-items: center; color: #5E5E5A; font-size: 13px">
+        <a href="#">Obrigações fiscais</a>
+        <span aria-hidden="true">/</span>
+        <a href="#">SPED ECF</a>
+        <span aria-hidden="true">/</span>
+        <span style="color: #1C1C1A">Processar e gerar</span>
+      </nav>
+      <div style="display: flex; gap: 10px; align-items: center; background: #F4F4F2; border: 1px solid #E3E2DE; border-radius: 8px; padding: 6px 12px; font-size: 13px">
+        <span>{{selSummary}}</span>
+        <span aria-hidden="true" style="color: #9C9B96">•</span>
+        <span>12/2025</span>
+      </div>
+    </div>
+  </header>
+
+  <main style="max-width: 1240px; margin: 0 auto; padding: 32px 24px 64px; display: flex; flex-direction: column; gap: 24px">
+
+    <div style="display: flex; flex-direction: column; gap: 6px">
+      <h1 style="margin: 0; font-size: 28px; line-height: 1.2; font-weight: 600">SPED ECF</h1>
+      <p style="margin: 0; color: #5E5E5A; max-width: 760px">Processe competências ou gere o arquivo do exercício. As abas são independentes: gerar não exige novo processamento.</p>
+    </div>
+
+    <section aria-labelledby="param-title" style="background: #FFFFFF; border: 1px solid #E3E2DE; border-radius: 12px; padding: 20px 24px; display: flex; flex-direction: column; gap: 16px">
+      <div style="display: flex; flex-wrap: wrap; gap: 8px; align-items: baseline; justify-content: space-between">
+        <h2 id="param-title" style="margin: 0; font-size: 15px; font-weight: 600">Parâmetros comuns</h2>
+        <div style="display: flex; gap: 16px; align-items: center; font-size: 13px; color: #5E5E5A">
+          <span>Herdados do contexto selecionado</span>
+          <button type="button" onClick="{{limpar}}" style="background: none; border: none; padding: 10px 0; color: #B03A0A; font-size: 13px; font-weight: 500; cursor: pointer">Limpar resultados</button>
+        </div>
+      </div>
+      <fieldset style="border: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px">
+        <legend style="padding: 0; margin-bottom: 8px; font-size: 12px; color: #5E5E5A">Empresas</legend>
+        <div style="display: flex; flex-wrap: wrap; gap: 8px">
+          <sc-for list="{{empresasSel}}" as="e" hint-placeholder-count="2">
+            <label style="{{e.style}}">
+              <input type="checkbox" checked="{{e.checked}}" onChange="{{e.toggle}}" disabled="{{busy}}" style="width: 16px; height: 16px; margin: 0; accent-color: #C2410C">
+              <span style="font-family: 'IBM Plex Mono', monospace; font-weight: 500">{{e.cod}}</span>
+              <span>{{e.nome}}</span>
+            </label>
+          </sc-for>
+        </div>
+      </fieldset>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; border-top: 1px solid #EEEDE9; padding-top: 16px">
+        <div style="display: flex; flex-direction: column; gap: 4px">
+          <span style="font-size: 12px; color: #5E5E5A">Competência</span>
+          <span style="font-weight: 500">12/2025</span>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 4px">
+          <span style="font-size: 12px; color: #5E5E5A; display: flex; gap: 6px; align-items: center">Versão contábil
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" role="img" aria-label="Bloqueado"><rect x="4" y="11" width="16" height="10" rx="2"></rect><path d="M8 11V7a4 4 0 0 1 8 0v4"></path></svg>
+          </span>
+          <span style="font-weight: 500">V10.2 · Versão Contábil Outubro 2025</span>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 4px">
+          <span style="font-size: 12px; color: #5E5E5A; display: flex; gap: 6px; align-items: center">Layout
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" role="img" aria-label="Bloqueado"><rect x="4" y="11" width="16" height="10" rx="2"></rect><path d="M8 11V7a4 4 0 0 1 8 0v4"></path></svg>
+          </span>
+          <span style="font-weight: 500">LAY-001 · Layout SPED ECF v12.1</span>
+        </div>
+      </div>
+    </section>
+
+    <div style="background: #FFFFFF; border: 1px solid #E3E2DE; border-radius: 12px; display: flex; flex-direction: column">
+      <div role="tablist" aria-label="Ações da ECF" style="display: flex; gap: 4px; padding: 0 16px; border-bottom: 1px solid #E3E2DE; overflow-x: auto">
+        <button type="button" role="tab" id="tab-proc" aria-controls="panel-proc" aria-selected="{{tabProcSelected}}" onClick="{{goProc}}" style="{{tabProcStyle}}">
+          Processar ECF
+          <sc-if value="{{procWarn}}" hint-placeholder-val="{{ false }}">
+            <span aria-label="inconsistências" style="font-size: 12px; font-weight: 600; background: #FFF1D6; color: #6B4100; border-radius: 999px; padding: 1px 8px">{{procIssues}}</span>
+          </sc-if>
+          <sc-if value="{{procRunning}}" hint-placeholder-val="{{ false }}">
+            <span style="font-size: 12px; font-family: 'IBM Plex Mono', monospace; color: #B03A0A">{{procPctLabel}}</span>
+          </sc-if>
+        </button>
+        <button type="button" role="tab" id="tab-gen" aria-controls="panel-gen" aria-selected="{{tabGenSelected}}" onClick="{{goGen}}" style="{{tabGenStyle}}">
+          Gerar arquivo TXT ECF
+          <sc-if value="{{genRunning}}" hint-placeholder-val="{{ false }}">
+            <span style="font-size: 12px; font-family: 'IBM Plex Mono', monospace; color: #B03A0A">{{genPctLabel}}</span>
+          </sc-if>
+        </button>
+      </div>
+
+      <!-- ABA PROCESSAR -->
+      <sc-if value="{{tabProc}}" hint-placeholder-val="{{ true }}">
+        <section role="tabpanel" id="panel-proc" aria-labelledby="tab-proc" style="padding: 24px; display: flex; flex-direction: column; gap: 20px; max-width: 880px">
+          <div style="display: flex; flex-direction: column; gap: 6px">
+            <h2 style="margin: 0; font-size: 18px; font-weight: 600">Processar dados do Bloco M · 12/2025</h2>
+            <p style="margin: 0; color: #5E5E5A">Processa apenas a competência selecionada, para cada empresa marcada.</p>
+          </div>
+
+          <div style="display: flex; flex-direction: column; gap: 6px; max-width: 520px">
+            <label for="versao-tributo" style="font-size: 13px; font-weight: 500">Versão tributo <span style="color: #B42318">*</span></label>
+            <select id="versao-tributo" value="{{vt}}" onChange="{{onVt}}" disabled="{{busy}}" style="height: 44px; border: 1px solid #CFCDC7; border-radius: 8px; padding: 0 12px; font-size: 14px; background: #FFFFFF; color: #1C1C1A">
+              <option value="001">VT-2025-12-001 · Versão Tributo Dezembro 2025</option>
+              <option value="002">VT-2025-11-002 · Versão Tributo Novembro 2025</option>
+            </select>
+            <span style="display: flex; gap: 6px; align-items: center; font-size: 12px; color: #1A7F37">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg>
+              Pré-requisito atendido: Bloco 0 cadastrado
+            </span>
+          </div>
+
+          <sc-if value="{{procIdle}}" hint-placeholder-val="{{ true }}">
+            <div style="display: flex; flex-wrap: wrap; gap: 12px; align-items: center; justify-content: space-between; border-top: 1px solid #EEEDE9; padding-top: 20px">
+              <span style="font-size: 13px; color: #5E5E5A">Último processamento: 03/11/2026 18:42 · concluído</span>
+              <button type="button" onClick="{{startProc}}" disabled="{{noneSel}}" style="height: 44px; padding: 0 22px; border: none; border-radius: 8px; background: #C2410C; color: #FFFFFF; font-size: 14px; font-weight: 600; cursor: pointer">{{procBtnLabel}}</button>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{procRunning}}" hint-placeholder-val="{{ false }}">
+            <div role="status" aria-live="polite" style="display: flex; flex-direction: column; gap: 14px; border: 1px solid #F5D3BF; background: #FFF6F0; border-radius: 10px; padding: 16px">
+              <div style="display: flex; justify-content: space-between; gap: 12px; font-weight: 600">
+                <span>{{procRunLabel}}</span>
+                <span style="font-family: 'IBM Plex Mono', monospace">{{procPctLabel}}</span>
+              </div>
+              <div style="height: 8px; background: #F2E2D8; border-radius: 4px; overflow: hidden">
+                <div style="{{procBarStyle}}"></div>
+              </div>
+              <ol style="margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 8px">
+                <sc-for list="{{steps}}" as="step" hint-placeholder-count="4">
+                  <li style="display: flex; gap: 10px; align-items: center; font-size: 13px">
+                    <sc-if value="{{step.done}}" hint-placeholder-val="{{ false }}">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#1A7F37" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" role="img" aria-label="Concluída"><path d="M20 6 9 17l-5-5"></path></svg>
+                    </sc-if>
+                    <sc-if value="{{step.current}}" hint-placeholder-val="{{ false }}">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#C2410C" stroke-width="2.4" stroke-linecap="round" role="img" aria-label="Em andamento"><circle cx="12" cy="12" r="8" stroke-opacity="0.25"></circle><path d="M12 4a8 8 0 0 1 8 8"></path></svg>
+                    </sc-if>
+                    <sc-if value="{{step.pending}}" hint-placeholder-val="{{ true }}">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#9C9B96" stroke-width="2" role="img" aria-label="Pendente"><circle cx="12" cy="12" r="7"></circle></svg>
+                    </sc-if>
+                    <span style="{{step.textStyle}}">{{step.name}}</span>
+                  </li>
+                </sc-for>
+              </ol>
+              <span style="font-size: 12px; color: #5E5E5A">Você pode sair desta tela; o processamento continua e o resultado fica salvo aqui.</span>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{procOk}}" hint-placeholder-val="{{ false }}">
+            <div role="status" style="display: flex; flex-direction: column; gap: 14px; border: 1px solid #BFE3C9; background: #EEF8F1; border-radius: 10px; padding: 16px">
+              <div style="display: flex; gap: 12px; align-items: flex-start">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#1A7F37" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none"><circle cx="12" cy="12" r="10"></circle><path d="m8 12 3 3 5-6"></path></svg>
+                <div style="display: flex; flex-direction: column; gap: 2px">
+                  <span style="font-weight: 600; color: #14632B">Processamento concluído sem inconsistências</span>
+                  <span style="font-size: 13px; color: #3F5A47">{{procOkSub}}</span>
+                </div>
+              </div>
+              <div style="display: flex; flex-wrap: wrap; gap: 12px; justify-content: flex-end">
+                <button type="button" onClick="{{startProc}}" style="height: 44px; padding: 0 18px; border: 1px solid #CFCDC7; border-radius: 8px; background: #FFFFFF; color: #1C1C1A; font-size: 14px; font-weight: 500; cursor: pointer">Processar novamente</button>
+                <button type="button" onClick="{{goGen}}" style="height: 44px; padding: 0 18px; border: none; border-radius: 8px; background: #C2410C; color: #FFFFFF; font-size: 14px; font-weight: 600; cursor: pointer">Ir para Gerar arquivo TXT</button>
+              </div>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{procWarn}}" hint-placeholder-val="{{ false }}">
+            <div role="status" style="display: flex; flex-direction: column; gap: 14px; border: 1px solid #F0D68A; background: #FFF8E1; border-radius: 10px; padding: 16px">
+              <div style="display: flex; gap: 12px; align-items: flex-start">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#8A5300" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none"><path d="M12 3 2 20h20L12 3z"></path><path d="M12 10v4"></path><path d="M12 17h.01"></path></svg>
+                <div style="display: flex; flex-direction: column; gap: 2px">
+                  <span style="font-weight: 600; color: #6B4100">Concluído com {{procIssues}} inconsistências</span>
+                  <span style="font-size: 13px; color: #6B5A33">Contas contábeis sem plano fiscal vinculado. Corrija e processe novamente.</span>
+                </div>
+              </div>
+              <div style="display: flex; flex-wrap: wrap; gap: 12px; justify-content: flex-end">
+                <button type="button" onClick="{{startProc}}" style="height: 44px; padding: 0 18px; border: 1px solid #CFCDC7; border-radius: 8px; background: #FFFFFF; color: #1C1C1A; font-size: 14px; font-weight: 500; cursor: pointer">Processar novamente</button>
+                <button type="button" onClick="{{openModal}}" style="height: 44px; padding: 0 18px; border: none; border-radius: 8px; background: #8A5300; color: #FFFFFF; font-size: 14px; font-weight: 600; cursor: pointer">Ver inconsistências</button>
+              </div>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{showSaved}}" hint-placeholder-val="{{ false }}">
+            <div role="status" style="display: flex; gap: 10px; align-items: center; font-size: 13px; background: #F4F4F2; border-radius: 8px; padding: 10px 12px">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#1A7F37" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg>
+              <span>{{savedMsg}}</span>
+            </div>
+          </sc-if>
+        </section>
+      </sc-if>
+
+      <!-- ABA GERAR -->
+      <sc-if value="{{tabGen}}" hint-placeholder-val="{{ false }}">
+        <section role="tabpanel" id="panel-gen" aria-labelledby="tab-gen" style="padding: 24px; display: flex; flex-direction: column; gap: 20px; max-width: 880px">
+          <div style="display: flex; flex-direction: column; gap: 6px">
+            <h2 style="margin: 0; font-size: 18px; font-weight: 600">Gerar arquivo TXT da ECF · Exercício 2025</h2>
+            <p style="margin: 0; color: #5E5E5A">Consolida as competências já processadas (01/2025 a 12/2025). Não exige novo processamento.</p>
+          </div>
+
+          <sc-if value="{{genIdle}}" hint-placeholder-val="{{ true }}">
+            <div style="display: flex; flex-wrap: wrap; gap: 12px; align-items: center; justify-content: space-between; border-top: 1px solid #EEEDE9; padding-top: 20px">
+              <a href="#" style="font-size: 14px; font-weight: 500; padding: 12px 0">Ir para Pesquisa de ECFs</a>
+              <button type="button" onClick="{{startGen}}" disabled="{{noneSel}}" style="height: 44px; padding: 0 22px; border: none; border-radius: 8px; background: #C2410C; color: #FFFFFF; font-size: 14px; font-weight: 600; cursor: pointer">{{genBtnLabel}}</button>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{genRunning}}" hint-placeholder-val="{{ false }}">
+            <div role="status" aria-live="polite" style="display: flex; flex-direction: column; gap: 12px; border: 1px solid #F5D3BF; background: #FFF6F0; border-radius: 10px; padding: 16px">
+              <div style="display: flex; justify-content: space-between; gap: 12px; font-weight: 600">
+                <span>{{genStepLabel}}</span>
+                <span style="font-family: 'IBM Plex Mono', monospace">{{genPctLabel}}</span>
+              </div>
+              <div style="height: 8px; background: #F2E2D8; border-radius: 4px; overflow: hidden">
+                <div style="{{genBarStyle}}"></div>
+              </div>
+              <span style="font-size: 12px; color: #5E5E5A">Você pode sair desta tela; o arquivo fica disponível na Pesquisa de ECFs.</span>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{genDone}}" hint-placeholder-val="{{ false }}">
+            <div role="status" style="display: flex; flex-direction: column; gap: 14px; border: 1px solid #BFE3C9; background: #EEF8F1; border-radius: 10px; padding: 16px">
+              <div style="display: flex; gap: 12px; align-items: flex-start">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#1A7F37" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none"><circle cx="12" cy="12" r="10"></circle><path d="m8 12 3 3 5-6"></path></svg>
+                <div style="display: flex; flex-direction: column; gap: 2px">
+                  <span style="font-weight: 600; color: #14632B">{{genDoneTitle}}</span>
+                  <span style="font-size: 13px; color: #3F5A47">Disponível também na Pesquisa de ECFs.</span>
+                </div>
+              </div>
+              <ul style="margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; background: #FFFFFF; border: 1px solid #DCEFE2; border-radius: 8px">
+                <sc-for list="{{genFiles}}" as="f" hint-placeholder-count="2">
+                  <li style="{{f.rowStyle}}">
+                    <span style="display: flex; flex-direction: column; gap: 2px; min-width: 0">
+                      <span style="font-weight: 500">{{f.empresa}}</span>
+                      <span style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #5E5E5A">{{f.file}}</span>
+                    </span>
+                    <a href="#" aria-label="{{f.aria}}" style="flex: none; display: inline-flex; gap: 6px; align-items: center; height: 44px; padding: 0 12px; font-size: 13px; font-weight: 500; text-decoration: none">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"></path></svg>
+                      Baixar
+                    </a>
+                  </li>
+                </sc-for>
+              </ul>
+              <div style="display: flex; flex-wrap: wrap; gap: 12px; justify-content: flex-end">
+                <button type="button" onClick="{{startGen}}" style="height: 44px; padding: 0 18px; border: 1px solid #CFCDC7; border-radius: 8px; background: #FFFFFF; color: #1C1C1A; font-size: 14px; font-weight: 500; cursor: pointer">Gerar novamente</button>
+                <sc-if value="{{multi}}" hint-placeholder-val="{{ true }}">
+                  <a href="#" style="display: inline-flex; gap: 8px; align-items: center; height: 44px; padding: 0 20px; border-radius: 8px; background: #C2410C; color: #FFFFFF; font-size: 14px; font-weight: 600; text-decoration: none">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"></path></svg>
+                    {{batchLabel}}
+                  </a>
+                </sc-if>
+              </div>
+            </div>
+          </sc-if>
+        </section>
+      </sc-if>
+    </div>
+  </main>
+
+  <!-- POP-UP DE INCONSISTÊNCIAS -->
+  <sc-if value="{{modal}}" hint-placeholder-val="{{ false }}">
+    <div style="position: absolute; inset: 0; background: rgba(28, 28, 26, 0.5); display: flex; justify-content: center; align-items: flex-start; padding: 96px 16px 32px">
+      <div role="dialog" aria-modal="true" aria-labelledby="inc-title" style="width: 100%; max-width: 940px; background: #FFFFFF; border-radius: 14px; box-shadow: 0 24px 64px rgba(0, 0, 0, 0.25); display: flex; flex-direction: column">
+        <div style="display: flex; gap: 16px; align-items: flex-start; justify-content: space-between; padding: 20px 24px; border-bottom: 1px solid #EEEDE9">
+          <div style="display: flex; flex-direction: column; gap: 4px">
+            <h2 id="inc-title" style="margin: 0; font-size: 18px; font-weight: 600">Inconsistências · 12/2025</h2>
+            <p style="margin: 0; color: #5E5E5A; font-size: 13px">Vincule o plano fiscal a cada número de conta, por empresa. {{pendLabel}}</p>
+          </div>
+          <button type="button" aria-label="Fechar" onClick="{{closeModal}}" style="width: 44px; height: 44px; flex: none; border: none; background: none; border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center; color: #5E5E5A">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"></path></svg>
+          </button>
+        </div>
+
+        <div style="padding: 16px 24px 0; display: flex; flex-wrap: wrap; gap: 8px" role="group" aria-label="Filtrar por empresa">
+          <sc-for list="{{chips}}" as="chip" hint-placeholder-count="3">
+            <button type="button" aria-pressed="{{chip.pressed}}" onClick="{{chip.pick}}" style="{{chip.style}}">{{chip.label}} <span style="font-family: 'IBM Plex Mono', monospace; opacity: 0.8">{{chip.count}}</span></button>
+          </sc-for>
+        </div>
+
+        <div style="padding: 16px 24px; overflow-x: auto">
+          <div style="min-width: 780px; display: flex; flex-direction: column">
+            <div style="display: grid; grid-template-columns: 250px minmax(0, 1fr) minmax(0, 1fr) 150px 44px; gap: 12px; padding: 0 0 8px; border-bottom: 1px solid #E3E2DE; font-size: 12px; font-weight: 600; color: #5E5E5A">
+              <span>Empresa</span>
+              <span>Número da conta</span>
+              <span>Plano fiscal</span>
+              <span>Situação</span>
+              <span></span>
+            </div>
+            <sc-for list="{{rowsView}}" as="row" hint-placeholder-count="5">
+              <div style="display: grid; grid-template-columns: 250px minmax(0, 1fr) minmax(0, 1fr) 150px 44px; gap: 12px; align-items: center; padding: 10px 0; border-bottom: 1px solid #EEEDE9">
+                <select aria-label="Empresa" value="{{row.empresa}}" onChange="{{row.onEmpresa}}" style="height: 40px; border: 1px solid #CFCDC7; border-radius: 8px; padding: 0 10px; font-size: 13px; background: #FFFFFF; color: #1C1C1A">
+                  <sc-for list="{{row.opts}}" as="opt" hint-placeholder-count="2">
+                    <option value="{{opt.cod}}">{{opt.label}}</option>
+                  </sc-for>
+                </select>
+                <input aria-label="Número da conta" value="{{row.conta}}" onChange="{{row.onConta}}" placeholder="0.0.0.00.00-0" style="height: 40px; border: 1px solid #CFCDC7; border-radius: 8px; padding: 0 10px; font-size: 13px; font-family: 'IBM Plex Mono', monospace; color: #1C1C1A; min-width: 0">
+                <input aria-label="Plano fiscal" value="{{row.plano}}" onChange="{{row.onPlano}}" placeholder="Código do plano fiscal" style="{{row.planoStyle}}">
+                <span style="{{row.tagStyle}}">{{row.tag}}</span>
+                <button type="button" aria-label="Remover linha" onClick="{{row.remove}}" style="width: 44px; height: 44px; border: none; background: none; border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center; color: #5E5E5A">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"></path></svg>
+                </button>
+              </div>
+            </sc-for>
+            <button type="button" onClick="{{addRow}}" style="align-self: flex-start; margin-top: 12px; height: 44px; padding: 0 14px; border: 1px dashed #CFCDC7; border-radius: 8px; background: #FFFFFF; color: #1C1C1A; font-size: 13px; font-weight: 500; cursor: pointer; display: flex; gap: 8px; align-items: center">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg>
+              Adicionar conta
+            </button>
+          </div>
+        </div>
+
+        <div style="display: flex; flex-wrap: wrap; gap: 12px; align-items: center; justify-content: space-between; padding: 16px 24px; border-top: 1px solid #EEEDE9; background: #FAFAF8; border-radius: 0 0 14px 14px">
+          <span style="font-size: 12px; color: #5E5E5A">Os vínculos ficam salvos por empresa e valem para os próximos processamentos.</span>
+          <div style="display: flex; gap: 10px">
+            <button type="button" onClick="{{closeModal}}" style="height: 44px; padding: 0 18px; border: 1px solid #CFCDC7; border-radius: 8px; background: #FFFFFF; color: #1C1C1A; font-size: 14px; font-weight: 500; cursor: pointer">Cancelar</button>
+            <button type="button" onClick="{{save}}" style="height: 44px; padding: 0 22px; border: none; border-radius: 8px; background: #C2410C; color: #FFFFFF; font-size: 14px; font-weight: 600; cursor: pointer">Salvar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"estadoInicial":{"editor":"enum","options":["ocioso","processando","sucesso","inconsistencias","popup","gerar"],"default":"ocioso","section":"Simulação"},"$preview":{"width":1440,"height":1180}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = this.initialState(props.estadoInicial ?? 'ocioso');
+  }
+
+  initialState(ini) {
+    const rows = [
+      { id: 1, empresa: '0341', conta: '1.1.2.10.00-3', plano: '' },
+      { id: 2, empresa: '0341', conta: '1.8.8.92.00-1', plano: '' },
+      { id: 3, empresa: '0341', conta: '4.1.1.10.00-7', plano: '' },
+      { id: 4, empresa: '0653', conta: '3.1.4.20.00-5', plano: '' },
+      { id: 5, empresa: '0653', conta: '7.1.9.99.00-2', plano: '' }
+    ];
+    const map = { ocioso: 'idle', processando: 'running', sucesso: 'ok', inconsistencias: 'warn', popup: 'warn', gerar: 'idle' };
+    return {
+      tab: ini === 'gerar' ? 'gen' : 'proc',
+      vt: ini === 'sucesso' ? '002' : '001',
+      sel: { '0341': true, '0653': true },
+      proc: map[ini] || 'idle',
+      procPct: ini === 'processando' ? 56 : 0,
+      procIssues: 5,
+      gen: 'idle',
+      genPct: 0,
+      modal: ini === 'popup',
+      filtro: 'todas',
+      saved: false,
+      nextId: 6,
+      rows: rows
+    };
+  }
+
+  componentDidUpdate(prev) {
+    if (prev.estadoInicial !== this.props.estadoInicial) {
+      clearInterval(this.pt); clearInterval(this.gt);
+      this.setState(this.initialState(this.props.estadoInicial ?? 'ocioso'));
+    }
+  }
+
+  componentWillUnmount() {
+    clearInterval(this.pt); clearInterval(this.gt);
+  }
+
+  pending(rows) {
+    return rows.filter((r) => !String(r.plano).trim()).length;
+  }
+
+  startProc() {
+    clearInterval(this.pt);
+    this.setState({ proc: 'running', procPct: 0, saved: false });
+    this.pt = setInterval(() => {
+      const p = this.state.procPct + 4;
+      if (p >= 100) {
+        clearInterval(this.pt);
+        // Cenários: VT-2025-12-001 retorna warning (contas sem plano fiscal); VT-2025-11-002 retorna sucesso.
+        const pend = this.pending(this.state.rows);
+        const ok = this.state.vt === '002' || pend === 0;
+        this.setState({ procPct: 100, proc: ok ? 'ok' : 'warn', procIssues: pend });
+      } else {
+        this.setState({ procPct: p });
+      }
+    }, 200);
+  }
+
+  startGen() {
+    clearInterval(this.gt);
+    this.setState({ gen: 'running', genPct: 0 });
+    this.gt = setInterval(() => {
+      const p = this.state.genPct + 5;
+      if (p >= 100) {
+        clearInterval(this.gt);
+        this.setState({ genPct: 100, gen: 'done' });
+      } else {
+        this.setState({ genPct: p });
+      }
+    }, 160);
+  }
+
+  upd(id, key, value) {
+    this.setState({ rows: this.state.rows.map((r) => (r.id === id ? Object.assign({}, r, { [key]: value }) : r)) });
+  }
+
+  renderVals() {
+    const s = this.state;
+    const empresas = [
+      { cod: '0341', nome: 'Itaú Unibanco S.A.', curto: 'Itaú Unibanco' },
+      { cod: '0653', nome: 'Itaú Unibanco Holding S.A.', curto: 'Holding' }
+    ];
+    const selected = empresas.filter((e) => s.sel[e.cod]);
+    const nSel = selected.length;
+    const multi = nSel > 1;
+    const pend = this.pending(s.rows);
+    const busy = s.proc === 'running' || s.gen === 'running';
+
+    const empresasSel = empresas.map((e) => {
+      const on = !!s.sel[e.cod];
+      return {
+        cod: e.cod,
+        nome: e.nome,
+        checked: on,
+        toggle: () => this.setState({ sel: Object.assign({}, this.state.sel, { [e.cod]: !this.state.sel[e.cod] }) }),
+        style: 'display: flex; gap: 10px; align-items: center; min-height: 44px; box-sizing: border-box; padding: 0 14px; border-radius: 8px; font-size: 13px; cursor: pointer; ' +
+          (on ? 'border: 1px solid #C2410C; background: #FFF6F0' : 'border: 1px solid #CFCDC7; background: #FFFFFF')
+      };
+    });
+
+    const tabStyle = (active) => 'display: flex; gap: 8px; align-items: center; height: 52px; padding: 0 16px; border: none; background: none; cursor: pointer; font-size: 14px; white-space: nowrap; margin-bottom: -1px; ' +
+      (active ? 'font-weight: 600; color: #1C1C1A; border-bottom: 3px solid #C2410C' : 'font-weight: 500; color: #5E5E5A; border-bottom: 3px solid transparent');
+
+    const stepNames = ['Carregando saldos contábeis', 'Aplicando plano fiscal às contas', 'Validando regras do Bloco M', 'Gravando resultado da competência'];
+    const cur = Math.min(3, Math.floor(s.procPct / 25));
+    const steps = stepNames.map((n, i) => ({
+      name: n,
+      done: i < cur,
+      current: i === cur,
+      pending: i > cur,
+      textStyle: i === cur ? 'font-weight: 600; color: #1C1C1A' : (i < cur ? 'color: #3F3F3B' : 'color: #5E5E5A')
+    }));
+
+    const bar = (p) => 'width: ' + p + '%; height: 100%; background: #C2410C; border-radius: 4px; transition: width 0.2s linear';
+    const rowStyle = (i) => 'display: flex; gap: 12px; align-items: center; justify-content: space-between; padding: 6px 6px 6px 14px' + (i > 0 ? '; border-top: 1px solid #EEF5F0' : '');
+
+    const genFiles = selected.map((e, i) => ({
+      empresa: e.cod + ' · ' + e.nome,
+      file: 'ECF_' + e.cod + '_2025.txt',
+      aria: 'Baixar ECF da empresa ' + e.cod,
+      rowStyle: rowStyle(i)
+    }));
+
+    const chipDefs = [{ id: 'todas', label: 'Todas' }].concat(empresas.map((e) => ({ id: e.cod, label: e.cod + ' · ' + e.curto })));
+    const chips = chipDefs.map((c) => {
+      const active = s.filtro === c.id;
+      const count = c.id === 'todas' ? s.rows.length : s.rows.filter((r) => r.empresa === c.id).length;
+      return {
+        label: c.label,
+        count: count,
+        pressed: active ? 'true' : 'false',
+        pick: () => this.setState({ filtro: c.id }),
+        style: 'height: 36px; padding: 0 14px; border-radius: 999px; font-size: 13px; font-weight: 500; cursor: pointer; display: flex; gap: 6px; align-items: center; ' +
+          (active ? 'background: #1C1C1A; color: #FFFFFF; border: 1px solid #1C1C1A' : 'background: #FFFFFF; color: #1C1C1A; border: 1px solid #CFCDC7')
+      };
+    });
+
+    const rowsView = s.rows
+      .filter((r) => s.filtro === 'todas' || r.empresa === s.filtro)
+      .map((r) => {
+        const ok = !!String(r.plano).trim();
+        return {
+          empresa: r.empresa,
+          conta: r.conta,
+          plano: r.plano,
+          opts: empresas.map((e) => ({ cod: e.cod, label: e.cod + ' · ' + e.nome })),
+          tag: ok ? 'Vinculado' : 'Sem plano fiscal',
+          tagStyle: 'justify-self: start; font-size: 12px; font-weight: 500; border-radius: 999px; padding: 3px 10px; ' +
+            (ok ? 'background: #EEF8F1; color: #14632B' : 'background: #FFF1D6; color: #6B4100'),
+          planoStyle: 'height: 40px; border-radius: 8px; padding: 0 10px; font-size: 13px; font-family: \'IBM Plex Mono\', monospace; color: #1C1C1A; min-width: 0; ' +
+            (ok ? 'border: 1px solid #CFCDC7; background: #FFFFFF' : 'border: 1px solid #D9A520; background: #FFFCF2'),
+          onEmpresa: (e) => this.upd(r.id, 'empresa', e.target.value),
+          onConta: (e) => this.upd(r.id, 'conta', e.target.value),
+          onPlano: (e) => this.upd(r.id, 'plano', e.target.value),
+          remove: () => this.setState({ rows: this.state.rows.filter((x) => x.id !== r.id) })
+        };
+      });
+
+    const empresasTxt = nSel === 1 ? '1 empresa' : nSel + ' empresas';
+
+    return {
+      selSummary: nSel === 1 ? selected[0].cod + ' · ' + selected[0].nome : empresasTxt,
+      empresasSel: empresasSel,
+      busy: busy,
+      noneSel: nSel === 0,
+      multi: multi,
+      batchLabel: 'Baixar em lote (.zip, ' + nSel + ' arquivos)',
+
+      tabProc: s.tab === 'proc',
+      tabGen: s.tab === 'gen',
+      tabProcSelected: s.tab === 'proc' ? 'true' : 'false',
+      tabGenSelected: s.tab === 'gen' ? 'true' : 'false',
+      tabProcStyle: tabStyle(s.tab === 'proc'),
+      tabGenStyle: tabStyle(s.tab === 'gen'),
+      goProc: () => this.setState({ tab: 'proc' }),
+      goGen: () => this.setState({ tab: 'gen' }),
+
+      procIdle: s.proc === 'idle',
+      procRunning: s.proc === 'running',
+      procOk: s.proc === 'ok',
+      procWarn: s.proc === 'warn',
+      procPctLabel: s.procPct + '%',
+      procBarStyle: bar(s.procPct),
+      procIssues: s.procIssues,
+      procBtnLabel: multi ? 'Processar ' + empresasTxt : 'Processar competência',
+      procRunLabel: 'Processando 12/2025 · ' + empresasTxt + '…',
+      procOkSub: 'Competência 12/2025 processada para ' + empresasTxt + '. Os arquivos são baixados na aba Gerar arquivo TXT ECF.',
+      vt: s.vt,
+      onVt: (e) => this.setState({ vt: e.target.value }),
+      steps: steps,
+      startProc: () => this.startProc(),
+
+      genIdle: s.gen === 'idle',
+      genRunning: s.gen === 'running',
+      genDone: s.gen === 'done',
+      genPctLabel: s.genPct + '%',
+      genBarStyle: bar(s.genPct),
+      genBtnLabel: multi ? 'Gerar arquivos (' + empresasTxt + ')' : 'Gerar arquivo',
+      genStepLabel: s.genPct < 50 ? 'Consolidando competências…' : (s.genPct < 90 ? 'Montando registros do layout v12.1…' : 'Gravando arquivo…'),
+      genDoneTitle: multi ? nSel + ' arquivos gerados' : 'Arquivo gerado',
+      genFiles: genFiles,
+      startGen: () => this.startGen(),
+
+      limpar: () => { clearInterval(this.pt); clearInterval(this.gt); this.setState({ proc: 'idle', procPct: 0, gen: 'idle', genPct: 0, saved: false }); },
+
+      modal: s.modal,
+      openModal: () => this.setState({ modal: true }),
+      closeModal: () => this.setState({ modal: false }),
+      pendLabel: pend === 0 ? 'Todas as contas estão vinculadas.' : pend + (pend === 1 ? ' conta pendente.' : ' contas pendentes.'),
+      chips: chips,
+      rowsView: rowsView,
+      addRow: () => this.setState({
+        rows: this.state.rows.concat([{ id: this.state.nextId, empresa: this.state.filtro === 'todas' ? '0341' : this.state.filtro, conta: '', plano: '' }]),
+        nextId: this.state.nextId + 1
+      }),
+      save: () => this.setState({ modal: false, saved: true }),
+      showSaved: s.saved && s.proc !== 'running',
+      savedMsg: pend === 0 ? 'Vínculos salvos. Processe a competência novamente para aplicá-los.' : 'Vínculos salvos. Ainda há ' + pend + ' contas sem plano fiscal.'
+    };
+  }
+}
+</script>
+</body>
+</html>
